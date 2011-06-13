@@ -1,38 +1,118 @@
 package Math::Vector::Real::Neighbors;
 
-use 5.012003;
+our $VERSION = '0.01';
+
 use strict;
 use warnings;
 
-require Exporter;
+use Sort::Key::Radix qw(nkeysort_inplace);
 
-our @ISA = qw(Exporter);
+sub neighbors {
+    my $class = shift;
+    my ($bottom, $top) = Math::Vector::Real->box(@_);
+    my $box = $top - $bottom;
+    my $v = [map $_ - $bottom, @_];
+    my $ixs = [0..$#_];
+    my $dist2 = [($box->abs2 * 10) x @_];
+    my $neighbors = [(undef) x @_];
+    _neighbors($v, $ixs, $dist2, $neighbors, $box, 0);
+    return @$neighbors;
+}
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
+sub neighbors_bruteforce {
+    my $class = shift;
+    my ($bottom, $top) = Math::Vector::Real->box(@_);
+    my $box = $top - $bottom;
+    my $v = [map $_ - $bottom, @_];
+    my $ixs = [0..$#_];
+    my $dist2 = [($box->abs2 * 10) x @_];
+    my $neighbors = [(undef) x @_];
+    _neighbors_bruteforce($v, $ixs, $dist2, $neighbors, $box, 0);
+    return @$neighbors;
+}
 
-# This allows declaration	use Math::Vector::Real::Neighbors ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
+sub _neighbors_bruteforce {
+    my ($v, $ixs, $dist2, $neighbors) = @_;
+    my $ixix = 0;
+    for my $i (@$ixs) {
+        $ixix++;
+        my $v0 = $v->[$i];
+        for my $j (@$ixs[$ixix..$#$ixs]) {
+            my $d2 = $v0->dist2($v->[$j]);
+            if ($dist2->[$i] > $d2) {
+                $dist2->[$i] = $d2;
+                $neighbors->[$i] = $j;
+            }
+            if ($dist2->[$j] > $d2) {
+                $dist2->[$j] = $d2;
+                $neighbors->[$j] = $i;
+            }
+        }
+    }
+}
 
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
+sub _neighbors {
+    if (@{$_[1]} < 6) {
+        _neighbors_bruteforce(@_);
+    }
+    else {
+        my ($v, $ixs, $dist2, $neighbors, $box) = @_;
+        my $dim = $box->max_component_index;
+        nkeysort_inplace { $v->[$_][$dim] } @$ixs;
 
-our @EXPORT = qw(
-	
-);
+        my $bfirst = @$ixs >> 1;
+        my $alast = $bfirst - 1;
 
-our $VERSION = '0.01';
+        my $abox = $box->clone;
+        $abox->[$dim] = $v->[$ixs->[$alast]][$dim] - $v->[$ixs->[0]][$dim];
+        my $bbox = $box->clone;
+        $bbox->[$dim] = $v->[$ixs->[$#$ixs]][$dim] - $v->[$ixs->[$bfirst]][$dim];
 
+        _neighbors($v, [@$ixs[0..$alast]], $dist2, $neighbors, $abox);
+        _neighbors($v, [@$ixs[$bfirst..$#$ixs]], $dist2, $neighbors, $bbox);
 
-# Preloaded methods go here.
+        for my $i (@$ixs[0..$alast]) {
+            my $vi = $v->[$i];
+            my $mind2 = $dist2->[$i];
+            for my $j (@$ixs[$bfirst..$#$ixs]) {
+                my $vj = $v->[$j];
+                my $dc = $vj->[$dim] - $vi->[$dim];
+                last unless ($mind2 > $dc * $dc);
+                my $d2 = $vi->dist2($vj);
+                if ($d2 < $mind2) {
+                    $mind2 = $dist2->[$i] = $d2;
+                    $neighbors->[$i] = $j;
+                }
+            }
+        }
+
+        for my $i (@$ixs[$bfirst..$#$ixs]) {
+            my $vi = $v->[$i];
+            my $mind2 = $dist2->[$i];
+            for my $j (reverse @$ixs[0..$alast]) {
+                my $vj = $v->[$j];
+                my $dc = $vj->[$dim] - $vi->[$dim];
+                last unless ($mind2 > $dc * $dc);
+                my $d2 = $vi->dist2($vj);
+                if ($d2 < $mind2) {
+                    $mind2 = $dist2->[$i] = $d2;
+                    $neighbors->[$i] = $j;
+                }
+            }
+        }
+
+        # my @dist2_cp = @$dist2;
+        # my @neighbors_cp = @$neighbors;
+        # _neighbors_bruteforce($v, $ixs, $dist2, $neighbors, $abox);
+        # use 5.010;
+        # say "ixs         : @$ixs";
+        # say "neighbors_cp: @neighbors_cp[@$ixs]";
+        # say "neighbors   : @$neighbors[@$ixs]";
+    }
+}
 
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
