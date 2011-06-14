@@ -116,45 +116,58 @@ __END__
 
 =head1 NAME
 
-Math::Vector::Real::Neighbors - Perl extension for blah blah blah
+Math::Vector::Real::Neighbors - find nearest neighbor for a set of points
 
 =head1 SYNOPSIS
 
   use Math::Vector::Real::Neighbors;
-  blah blah blah
+  use Math::Vector::Real::Random;
+
+  my @v = map Math::Vector::Real->random_normal(2), 0..1000;
+
+  my @nearest_ixs = Math::Vector::Real::Neighbors->neighbors(@v);
 
 =head1 DESCRIPTION
 
-Stub documentation for Math::Vector::Real::Neighbors, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
+This module is able to find for every point in a given set its nearest
+neighbour from the same set.
 
-Blah blah blah.
+=head2 API
 
-=head2 EXPORT
+Two methods are currently available:
 
-None by default.
+=over 4
 
+=item @ixs = Math::Vector::Real::Neighbors->neighbors(@p)
 
+Given a set of points returns the indexes on the set for the nearest
+neighbor for every point.
+
+=item @ixs = Math::Vector::Real::Neighbors->neighbors(@p)
+
+Does the same using a brute force algorithm. This method is mostly for
+testing purposes.
+
+=back
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
+L<Math::Vector::Real>.
 
-If you have a mailing list set up for your module, mention it here.
+The wikipedia entry for Nearest Neighbor Search L<http://en.wikipedia.org/wiki/Nearest_neighbor_search>.
 
-If you have a web site set up for your module, mention it here.
+L<http://cloud.github.com/downloads/salva/p5-Math-Vector-Real-Neighbors/nearest_neighbors.png>
 
-=head1 AUTHOR
+=for html
 
-Salvador Fandino, E<lt>salva@E<gt>
+<image
+src="http://cloud.github.com/downloads/salva/p5-Math-Vector-Real-Neighbors/nearest_neighbors.png"
+alt="some nearest neighbor graphical representation" width="1000" heigh="1000"></image>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2011 by Salvador Fandino
+Copyright (C) 2011 by Salvador FandiE<ntilde>o
+E<lt>sfandino@yahoo.comE<gt>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.12.3 or,

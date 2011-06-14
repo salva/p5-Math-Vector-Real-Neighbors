@@ -1,18 +1,25 @@
-# Before `make install' is performed this script should be runnable with
-# `make test'. After `make install' it should work as `perl Math-Vector-Real-Neighbors.t'
+#!/usr/bin/perl
 
-#########################
-
-# change 'tests => 1' to 'tests => last_test_to_print';
-
+use 5.010;
 use strict;
 use warnings;
 
-use Test::More tests => 1;
-BEGIN { use_ok('Math::Vector::Real::Neighbors') };
+use Test::More;
 
-#########################
+eval { require Math::Vector::Real::Random };
+if ($@) {
+    plan skip_all => "Math::Vector::Real::Random failed to load: $@";
+}
+else {
+    plan tests => 1;
+}
 
-# Insert your test code below, the Test::More module is use()ed here so read
-# its man page ( perldoc Test::More ) for help writing this test script.
+use Math::Vector::Real;
+use Math::Vector::Real::Neighbors;
 
+my @p = map { Math::Vector::Real->random_normal(5) } 1..300;
+
+my @n = Math::Vector::Real::Neighbors->neighbors(@p);
+my @nbf = Math::Vector::Real::Neighbors->neighbors_bruteforce(@p);
+
+is("@n", "@nbf");

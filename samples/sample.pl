@@ -13,12 +13,14 @@ use Math::Vector::Real::Neighbors;
 
 use Benchmark qw(cmpthese);
 
+my $points = 3000;
+
+my $size = 2000;
+my $margin = 0;
+my $w = 0.01;
+
 my $delta = V(0.5, 0.5);
 
-my $points = 3000;
-my $size = 800;
-my $margin = 100;
-my $w = 0.01;
 
 my @p;
 while (<DATA>) {
@@ -29,7 +31,7 @@ if (@p >= $points) {
     say "data loaded from file";
 }
 else {
-    @p = map Math::Vector::Real->random_normal(2, 0.3) + $delta, 1..$points;
+    @p = map Math::Vector::Real->random_normal(2, 0.2) + $delta, 1..$points;
     # print join("\n", @p, '');
 }
 
@@ -38,18 +40,17 @@ else {
 my @nbf;
 my @n;
 
-cmpthese( -1, { fast => sub { @n = Math::Vector::Real::Neighbors->neighbors(@p) },
-                bf   => sub { @nbf = Math::Vector::Real::Neighbors->neighbors_bruteforce(@p) }
-              } );
-
+cmpthese( 1, { fast => sub { @n = Math::Vector::Real::Neighbors->neighbors(@p) },
+               bf   => sub { @nbf = Math::Vector::Real::Neighbors->neighbors_bruteforce(@p) }
+             } );
 
 my $surface = Cairo::ImageSurface->create ('argb32', $size + 2 * $margin, $size + 2 * $margin);
 my $cr = Cairo::Context->create ($surface);
 
-$cr->set_source_rgb(1, 0, 0);
-for (0..$#p) {
-    arrow($p[$_], $p[$nbf[$_]]);
-}
+#$cr->set_source_rgb(1, 0, 0);
+#for (0..$#p) {
+#    arrow($p[$_], $p[$nbf[$_]]);
+#}
 
 $cr->set_source_rgb(0, 0, 1);
 for (0..$#p) {
@@ -74,7 +75,7 @@ sub arrow {
     next unless $d;
     # say "$d <= [$v0], [$v1]";
     my $u = ($v1 - $v0)->versor;
-    my $n = $u->normal2d;
+    my $n = $u->normal_base;
     if ($d < $w) {
         move_to($v1);
         line_to($v0 + $n * $d/2);
