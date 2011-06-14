@@ -143,7 +143,7 @@ Two methods are currently available:
 Given a set of points returns the indexes on the set for the nearest
 neighbor for every point.
 
-=item @ixs = Math::Vector::Real::Neighbors->neighbors(@p)
+=item @ixs = Math::Vector::Real::Neighbors->neighbors_bruteforce(@p)
 
 Does the same using a brute force algorithm. This method is mostly for
 testing purposes.
