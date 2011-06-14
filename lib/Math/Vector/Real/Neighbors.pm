@@ -111,6 +111,19 @@ sub _neighbors {
     }
 }
 
+sub neighbors_bubble {
+    my $class = shift;
+    my @v = @_;
+    my $n = sqrt(@v);
+    my (@c, @r, @p); # bubbles centers, radius and points
+    my 
+
+}
+
+sub _neighbors_bubble {
+    m
+}
+
 1;
 __END__
 
@@ -158,11 +171,11 @@ The wikipedia entry for Nearest Neighbor Search L<http://en.wikipedia.org/wiki/N
 
 L<http://cloud.github.com/downloads/salva/p5-Math-Vector-Real-Neighbors/nearest_neighbors.png>
 
-=for html
+=begin html
 
-<image
-src="http://cloud.github.com/downloads/salva/p5-Math-Vector-Real-Neighbors/nearest_neighbors.png"
-alt="some nearest neighbor graphical representation" width="1000" heigh="1000"></image>
+<image src="http://cloud.github.com/downloads/salva/p5-Math-Vector-Real-Neighbors/nearest_neighbors.png" alt="some nearest neighbor graphical representation" width="1000" heigh="1000"></image>
+
+=end html
 
 =head1 COPYRIGHT AND LICENSE
 
