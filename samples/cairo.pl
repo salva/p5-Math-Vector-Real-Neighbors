@@ -13,7 +13,7 @@ use Math::Vector::Real::Neighbors;
 
 use Benchmark qw(cmpthese);
 
-my $points = 3000;
+my $points = 1_000_000;
 
 my $size = 2000;
 my $margin = 0;
@@ -39,18 +39,21 @@ else {
 
 my @nbf;
 my @n;
+my @nkdt;
 
-cmpthese( 1, { fast => sub { @n = Math::Vector::Real::Neighbors->neighbors(@p) },
-               bf   => sub { @nbf = Math::Vector::Real::Neighbors->neighbors_bruteforce(@p) }
+cmpthese( 1, { # bf     => sub { @nbf  = Math::Vector::Real::Neighbors->neighbors_bruteforce(@p) },
+               # fast   => sub { @n    = Math::Vector::Real::Neighbors->neighbors(@p) },
+               kdtree  => sub { @n    =  Math::Vector::Real::Neighbors->neighbors_kdtree(@p) },
+               kdtree2 => sub { @nkdt =  Math::Vector::Real::Neighbors->neighbors_kdtree2(@p) }
              } );
 
 my $surface = Cairo::ImageSurface->create ('argb32', $size + 2 * $margin, $size + 2 * $margin);
 my $cr = Cairo::Context->create ($surface);
 
-#$cr->set_source_rgb(1, 0, 0);
-#for (0..$#p) {
-#    arrow($p[$_], $p[$nbf[$_]]);
-#}
+$cr->set_source_rgb(1, 0, 0);
+for (0..$#p) {
+    arrow($p[$_], $p[$nkdt[$_]]);
+}
 
 $cr->set_source_rgb(0, 0, 1);
 for (0..$#p) {
