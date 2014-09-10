@@ -144,6 +144,7 @@ Math::Vector::Real::Neighbors - find nearest neighbor for a set of points
 
 =head1 SYNOPSIS
 
+  use Math::Vector::Real;
   use Math::Vector::Real::Neighbors;
   use Math::Vector::Real::Random;
 
