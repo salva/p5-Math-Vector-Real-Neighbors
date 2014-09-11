@@ -5,6 +5,7 @@ our $VERSION = '0.02';
 use strict;
 use warnings;
 
+use Math::Vector::Real::kdTree;
 use Sort::Key::Radix qw(nkeysort_inplace);
 
 sub neighbors {
@@ -29,6 +30,19 @@ sub neighbors_bruteforce {
     my $neighbors = [(undef) x @_];
     _neighbors_bruteforce($v, $ixs, $dist2, $neighbors, $box, 0);
     return @$neighbors;
+}
+
+sub neighbors_kdtree {
+    shift;
+    my $tree = Math::Vector::Real::kdTree->new(@_);
+    map scalar($tree->find_nearest_neighbor_internal($_)), 0..$#_
+}
+
+sub neighbors_kdtree2 {
+    shift;
+    ( Math::Vector::Real::kdTree
+      -> new(@_)
+      -> find_nearest_neighbor_all_internal );
 }
 
 sub _neighbors_bruteforce {
