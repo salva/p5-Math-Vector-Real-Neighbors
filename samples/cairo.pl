@@ -13,7 +13,7 @@ use Math::Vector::Real::Neighbors;
 
 use Benchmark qw(cmpthese);
 
-my $points = 1_000_000;
+my $points = 100_000;
 
 my $size = 2000;
 my $margin = 0;
@@ -42,9 +42,9 @@ my @n;
 my @nkdt;
 
 cmpthese( 1, { # bf     => sub { @nbf  = Math::Vector::Real::Neighbors->neighbors_bruteforce(@p) },
-               # fast   => sub { @n    = Math::Vector::Real::Neighbors->neighbors(@p) },
-               kdtree  => sub { @n    =  Math::Vector::Real::Neighbors->neighbors_kdtree(@p) },
-               kdtree2 => sub { @nkdt =  Math::Vector::Real::Neighbors->neighbors_kdtree2(@p) }
+              slow   => sub { @n    = Math::Vector::Real::Neighbors->neighbors_slow(@p) },
+              kdtree  => sub { @n    =  Math::Vector::Real::Neighbors->neighbors_kdtree(@p) },
+              kdtree2 => sub { @nkdt =  Math::Vector::Real::Neighbors->neighbors_kdtree2(@p) }
              } );
 
 my $surface = Cairo::ImageSurface->create ('argb32', $size + 2 * $margin, $size + 2 * $margin);

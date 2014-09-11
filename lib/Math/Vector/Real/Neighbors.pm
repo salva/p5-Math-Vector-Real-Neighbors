@@ -8,7 +8,7 @@ use warnings;
 use Math::Vector::Real::kdTree;
 use Sort::Key::Radix qw(nkeysort_inplace);
 
-sub neighbors {
+sub neighbors_slow {
     my $class = shift;
     my ($bottom, $top) = Math::Vector::Real->box(@_);
     my $box = $top - $bottom;
@@ -44,6 +44,8 @@ sub neighbors_kdtree2 {
       -> new(@_)
       -> find_nearest_neighbor_all_internal );
 }
+
+*neighbors = \&neighbors_kdtree2;
 
 sub _neighbors_bruteforce {
     my ($v, $ixs, $dist2, $neighbors) = @_;
@@ -153,12 +155,13 @@ Math::Vector::Real::Neighbors - find nearest neighbor for a set of points
 
 =head1 DESCRIPTION
 
-B<Note: nowadays the algorithm provides in
-L<Math::Vector::Real::kdTree> is probably faster, even when taking
-into account the cost of creating the k-d tree structure>.
-
 This module is able to find for every point in a given set its nearest
 neighbour from the same set.
+
+B<Note: currently the C<neighbors> method is just a thin wrapper for
+the neighbor look-up algorithm provided in
+L<Math::Vector::Real::kdTree> which is a couple of orders of magnitude
+faster than the old one formerly used here.
 
 =head2 API
 
