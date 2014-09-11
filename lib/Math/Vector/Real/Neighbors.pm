@@ -1,6 +1,6 @@
 package Math::Vector::Real::Neighbors;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use strict;
 use warnings;
@@ -116,13 +116,9 @@ sub neighbors_bubble {
     my @v = @_;
     my $n = sqrt(@v);
     my (@c, @r, @p); # bubbles centers, radius and points
-    my 
-
 }
 
-sub _neighbors_bubble {
-    m
-}
+sub _neighbors_bubble {}
 
 1;
 __END__
@@ -133,6 +129,7 @@ Math::Vector::Real::Neighbors - find nearest neighbor for a set of points
 
 =head1 SYNOPSIS
 
+  use Math::Vector::Real
   use Math::Vector::Real::Neighbors;
   use Math::Vector::Real::Random;
 
@@ -141,6 +138,10 @@ Math::Vector::Real::Neighbors - find nearest neighbor for a set of points
   my @nearest_ixs = Math::Vector::Real::Neighbors->neighbors(@v);
 
 =head1 DESCRIPTION
+
+B<Note: nowadays the algorithm provides in
+L<Math::Vector::Real::kdTree> is probably faster, even when taking
+into account the cost of creating the k-d tree structure>.
 
 This module is able to find for every point in a given set its nearest
 neighbour from the same set.
@@ -179,7 +180,7 @@ L<http://cloud.github.com/downloads/salva/p5-Math-Vector-Real-Neighbors/nearest_
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2011 by Salvador FandiE<ntilde>o
+Copyright (C) 2011, 2014 by Salvador FandiE<ntilde>o
 E<lt>sfandino@yahoo.comE<gt>
 
 This library is free software; you can redistribute it and/or modify
